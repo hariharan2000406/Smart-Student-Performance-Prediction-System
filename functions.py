@@ -2,7 +2,6 @@ def get_student_data():
     student_id = input("Enter Student ID: ")
     student_name = input("Enter Student Name: ")
 
-    # User decides number of subjects
     num_subjects = int(input("Enter number of subjects: "))
 
     subjects = {}
