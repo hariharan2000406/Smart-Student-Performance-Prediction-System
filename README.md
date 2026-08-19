@@ -188,5 +188,8 @@ flowchart TD
     A[User clicks Predict] --> B[Button generates event]
     B --> C[Callback function executes]
     C --> D[Python processing starts]
+##15 Design Of the System 
+
+<img width="691" height="543" alt="Screenshot 2026-08-19 100003" src="https://github.com/user-attachments/assets/5f4fde67-6976-42e2-be25-732338d2af99" />
 
 
