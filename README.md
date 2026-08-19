@@ -189,5 +189,4 @@ flowchart TD
     B --> C[Callback function executes]
     C --> D[Python processing starts]
 
-## 18. Requirements Design
-<img width="800" height="400" alt="image" src="https://github.com/user-attachments/assets/2dd4736f-da4c-4cde-b9e2-c7bedd3403c1" />
+
