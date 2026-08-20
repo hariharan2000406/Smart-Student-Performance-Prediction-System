@@ -200,13 +200,83 @@ flowchart TD
   -Study Hours
   -Previous Performance
 
-  ## 20.Model Selection
+##20. Classification Problem
+-The classification model predicts one of four performance categories:
+
+-Category	 Meaning
+-Excellent	 Very high academic performance
+-Good	     Good academic performance
+-Average	 Moderate academic performance
+At Risk	Low academic performance
+
+##21.Workflow
+
+┌─────────────────────────┐
+│     1. DATA COLLECTION  │
+│ Student academic data  │
+│ Attendance, marks, etc. │
+└────────────┬────────────┘
+             ↓
+┌─────────────────────────┐
+│  2. DATA PREPROCESSING  │
+│ • Remove missing data   │
+│ • Clean data            │
+│ • Convert data          │
+└────────────┬────────────┘
+             ↓
+┌─────────────────────────┐
+│   3. FEATURE SELECTION  │
+│ • Attendance            │
+│ • Study Hours           │
+│ • Assignment Score      │
+│ • Internal Marks        │
+│ • Previous Score        │
+│ • Participation         │
+└────────────┬────────────┘
+             ↓
+       ┌─────┴─────┐
+       ↓           ↓
+┌─────────────┐ ┌─────────────┐
+│CLASSIFICATION│ │ REGRESSION  │
+└──────┬──────┘ └──────┬──────┘
+       ↓               ↓
+┌─────────────┐ ┌─────────────┐
+│4. MODEL     │ │4. MODEL     │
+│TRAINING     │ │TRAINING     │
+│             │ │             │
+│• Logistic   │ │• Linear     │
+│  Regression │ │  Regression  │
+│• Decision   │ │• Random      │
+│  Tree       │ │  Forest      │
+└──────┬──────┘ └──────┬──────┘
+       ↓               ↓
+┌─────────────┐ ┌─────────────┐
+│5. MODEL     │ │5. MODEL     │
+│EVALUATION   │ │EVALUATION   │
+│             │ │             │
+│• Accuracy   │ │• MAE        │
+│• Precision  │ │• MSE        │
+│• Recall     │ │• R² Score    │
+│• F1 Score   │ │             │
+└──────┬──────┘ └──────┬──────┘
+       ↓               ↓
+┌─────────────┐ ┌─────────────┐
+│6. PREDICTION│ │6. PREDICTION│
+│             │ │             │
+│ Excellent   │ │ Score       │
+│ Good        │ │ 0 – 100     │
+│ Average     │ │             │
+│ At Risk     │ │             │
+└─────────────┘ └─────────────┘
+
+
+##23.Model Selection
   ### The model for the training the ML has many implementation type
   -LogisticRegrsssion(Primary)
   -Decision Tree(optional)
   -Randomforest(Advanced)
 
-  ##21.Model Implemention
+##24.Model Implemention
   ### Using Logistic Regression Model
   -It's accuracy rate will be 97.8%
 
