@@ -1,8 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 import os
-import openpyxl
-from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+import csv
 
 # ── prediction logic ──────────────────────────────────────────────────────────
 def predict(attendance, study_hours, internal_marks, assignment, prev_score):
@@ -172,46 +171,31 @@ def on_clear():
     txt_rec.delete("1.0", "end")
     txt_rec.config(state="disabled")
 
-# ── save to excel ─────────────────────────────────────────────────────────────
-EXCEL_FILE = "student_performance_log.xlsx"
+# ── save to csv ───────────────────────────────────────────────────────────────
+# Matches exact column order of student_performance_200_no_recommendation.csv
+CSV_FILE = "student_performance_200_no_recommendation.csv"
 
-HEADERS = [
-    "Student ID", "Student Name",
-    "Attendance (%)", "Study Hours (per day)", "Internal Marks (%)",
-    "Assignment (%)", "Previous Score (%)",
-    "Prediction", "Risk Level", "Recommendation"
+CSV_HEADERS = [
+    "Student_ID", "Student_Name",
+    "Attendance", "Study_Hours", "Internal_Marks",
+    "Assignment", "Previous_Score",
+    "Final_Score", "Prediction_Level", "Risk_Level"
 ]
 
-def _header_style(cell):
-    cell.font      = Font(name="Arial", bold=True, color="FFFFFF")
-    cell.fill      = PatternFill("solid", fgColor="1F4E79")
-    cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
-    thin = Side(style="thin", color="000000")
-    cell.border    = Border(left=thin, right=thin, top=thin, bottom=thin)
-
-def _get_or_create_wb():
-    if os.path.exists(EXCEL_FILE):
-        wb = openpyxl.load_workbook(EXCEL_FILE)
-        ws = wb.active
-    else:
-        wb = openpyxl.Workbook()
-        ws = wb.active
-        ws.title = "Performance Log"
-        # write headers
-        for col, header in enumerate(HEADERS, start=1):
-            cell = ws.cell(row=1, column=col, value=header)
-            _header_style(cell)
-        # column widths
-        widths = [14, 20, 16, 22, 18, 16, 18, 24, 16, 45]
-        for col, w in enumerate(widths, start=1):
-            ws.column_dimensions[openpyxl.utils.get_column_letter(col)].width = w
-        ws.row_dimensions[1].height = 30
-    return wb, ws
+def _calc_final_score(att, hrs, intm, asgn, prev):
+    """Same formula as predict() — keeps CSV consistent."""
+    return round(
+        att * 0.25 +
+        (hrs / 10) * 100 * 0.15 +
+        intm * 0.25 +
+        asgn * 0.15 +
+        prev * 0.20,
+        2
+    )
 
 def on_save():
-    # validate inputs exist
-    stu_id   = entry_id.get().strip()
-    stu_name = entry_name.get().strip()
+    stu_id    = entry_id.get().strip()
+    stu_name  = entry_name.get().strip()
     pred_text = lbl_pred.cget("text")
 
     if not stu_id or not stu_name:
@@ -231,34 +215,30 @@ def on_save():
         messagebox.showerror("Save Error", "Academic fields have invalid values.")
         return
 
-    risk = lbl_risk.cget("text")
-    txt_rec.config(state="normal")
-    rec  = txt_rec.get("1.0", "end").strip()
-    txt_rec.config(state="disabled")
+    risk        = lbl_risk.cget("text")
+    final_score = _calc_final_score(att, hrs, intm, asgn, prev)
 
-    wb, ws = _get_or_create_wb()
-    next_row = ws.max_row + 1
+    write_header = not os.path.exists(CSV_FILE)
+    with open(CSV_FILE, "a", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        if write_header:
+            writer.writerow(CSV_HEADERS)
+        writer.writerow([
+            stu_id, stu_name,
+            att, hrs, intm, asgn, prev,
+            final_score, pred_text, risk
+        ])
 
-    row_data = [stu_id, stu_name, att, hrs, intm, asgn, prev, pred_text, risk, rec]
+    # count total rows
+    with open(CSV_FILE, newline="", encoding="utf-8") as f:
+        total_rows = sum(1 for _ in f) - 1  # minus header
 
-    thin = Side(style="thin", color="CCCCCC")
-    border = Border(left=thin, right=thin, top=thin, bottom=thin)
-
-    # alternate row fill
-    fill_color = "EBF3FB" if (next_row % 2 == 0) else "FFFFFF"
-    row_fill = PatternFill("solid", fgColor=fill_color)
-
-    for col, value in enumerate(row_data, start=1):
-        cell = ws.cell(row=next_row, column=col, value=value)
-        cell.font      = Font(name="Arial", size=10)
-        cell.alignment = Alignment(horizontal="left", vertical="center", wrap_text=True)
-        cell.border    = border
-        cell.fill      = row_fill
-
-    ws.row_dimensions[next_row].height = 22
-
-    wb.save(EXCEL_FILE)
-    messagebox.showinfo("Saved", f"Record saved to '{EXCEL_FILE}'\nRow {next_row - 1} added.")
+    messagebox.showinfo(
+        "Saved",
+        f"✅ New record added!\n\n"
+        f"File → {CSV_FILE}\n"
+        f"Total records: {total_rows}"
+    )
 
 # ── buttons ───────────────────────────────────────────────────────────────────
 tk.Button(action_frame, text="📊  Predict Performance",
