@@ -192,4 +192,22 @@ flowchart TD
 ## 18. Requirements Design
 <img width="691" height="543" alt="Screenshot 2026-08-19 100003" src="https://github.com/user-attachments/assets/5f4fde67-6976-42e2-be25-732338d2af99" />
 
+## 19.Dataset creation CSV
+ -Get the Student data Onexcel format 
+  -StudentID
+  -StudentName
+  -Attendence
+  -Study Hours
+  -Previous Performance
+
+  ## 20.Model Selection
+  ### The model for the training the ML has many implementation type
+  -LogisticRegrsssion(Primary)
+  -Decision Tree(optional)
+  -Randomforest(Advanced)
+
+  ##21.Model Implemention
+  ### Using Logistic Regression Model
+  -It's accuracy rate will be 97.8%
+
 
